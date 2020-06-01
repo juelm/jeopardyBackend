@@ -99,9 +99,78 @@ func unMarshalCategories(data []byte) []CategoryHeader{
 	return CurrentCategories
 }
 
+func getClues(categories []CategoryHeader) [] map[string] interface{}{
+	clues := [] map[string] interface{}{}
+	for _, category := range categories {
+		clueChannel := <- asyncGetClueData(category.Id)
+		if clueChannel.err != nil{
+			panic(clueChannel.err)
+		}
+		clueResponse := clueChannel.response.Body
+		defer clueResponse.Close()
+		clueJSON, ioerr := ioutil.ReadAll(clueResponse)
+		if ioerr != nil{
+			panic(ioerr)
+		}
+		newClue := unMarshalClues(clueJSON)
+		clues = append(clues, newClue)
+	}
+	return clues
+}
+
+func asyncGetClueData(id int) <- chan *HTTPResponseErrorBundle{
+	ch := make(chan *HTTPResponseErrorBundle)
+	go func() {
+		resp, err := http.Get(fmt.Sprintf("http://jservice.io/api/category?id=%d", id))
+		if err != nil{
+			panic(err)
+		}
+		currentResponseBundle := HTTPResponseErrorBundle{resp, err}
+		ch <- &currentResponseBundle
+	}()
+	return ch
+}
+
+func unMarshalClues(data []byte) map[string] interface{} {
+	clue := make(map[string] interface{})
+	err := json.Unmarshal(data, &clue)
+	if err != nil {
+		panic(err)
+	}
+	return clue
+}
+
+//func asyncGetClueData(categories []CategoryHeader) <- chan *[]byte{
+//	ch := make(chan *[]byte)
+//	for _, category := range categories {
+//		go func() {
+//			resp, err := http.Get(fmt.Sprintf("http://jservice.io/api/category?id=%d", category.Id))
+//			if err != nil{
+//				panic(err)
+//			}
+//			respJSON, ioerr := ioutil.ReadAll(resp.Body)
+//			if ioerr != nil {
+//				panic(ioerr)
+//			}
+//			ch <- &respJSON
+//			resp.Body.Close()
+//		}()
+//	}
+//
+//}
+
 func GetNewBoard(w http.ResponseWriter, r *http.Request) {
 	currentCategories := GetCategories()
+	currentClues := getClues(currentCategories)
+	prettyClues, err := json.MarshalIndent(currentClues,"","   ")
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(currentCategories)
+	fmt.Println("\n\n")
+	fmt.Printf("%s\n", string(prettyClues))
+	//fmt.Fprintf(w, string(currentCategories))
+
 }
 
 //func GetNewBoard(w http.ResponseWriter, r *http.Request) {
