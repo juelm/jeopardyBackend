@@ -36,23 +36,6 @@ func getCluesAsync(url string) <-chan *HTTPResponseErrorBundle{
 	return ch
 }
 
-//func index(w http.ResponseWriter, r *http.Request) {
-//	responseBundle := <- getCluesAsync("http://jservice.io/api/random")
-//	if responseBundle.err != nil{
-//		fmt.Println("Error Fetching Clues...")
-//	}
-//	w.WriteHeader(http.StatusOK)
-//	resp := responseBundle.response.Body
-//	defer responseBundle.response.Body.Close()
-//	respString, ioerr := ioutil.ReadAll(resp)
-//	if ioerr != nil{
-//		fmt.Println("Error Fetching extracting body...")
-//	}
-//	fmt.Println(respString)
-//	fmt.Fprintf(w, "Check your console")
-//	//fmt.Fprintf(w, string(respString))
-//}
-
 func index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Call an endpoint to see the jeopardy magic")
 }
@@ -140,26 +123,8 @@ func unMarshalClues(data []byte) map[string] interface{} {
 	return clue
 }
 
-//func asyncGetClueData(categories []CategoryHeader) <- chan *[]byte{
-//	ch := make(chan *[]byte)
-//	for _, category := range categories {
-//		go func() {
-//			resp, err := http.Get(fmt.Sprintf("http://jservice.io/api/category?id=%d", category.Id))
-//			if err != nil{
-//				panic(err)
-//			}
-//			respJSON, ioerr := ioutil.ReadAll(resp.Body)
-//			if ioerr != nil {
-//				panic(ioerr)
-//			}
-//			ch <- &respJSON
-//			resp.Body.Close()
-//		}()
-//	}
-//
-//}
-
 func GetNewBoard(w http.ResponseWriter, r *http.Request) {
+	enableCORS(&w)
 	currentCategories := GetCategories()
 	currentClues := getClues(currentCategories)
 	prettyClues, err := json.MarshalIndent(currentClues,"","   ")
@@ -169,26 +134,23 @@ func GetNewBoard(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(currentCategories)
 	fmt.Println("\n\n")
 	fmt.Printf("%s\n", string(prettyClues))
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(currentClues)
 	//fmt.Fprintf(w, string(currentCategories))
 
 }
 
-//func GetNewBoard(w http.ResponseWriter, r *http.Request) {
-//	responseBundle := <- getCluesAsync("http://jservice.io/api/random")
-//	if responseBundle.err != nil{
-//		fmt.Println("Error Fetching Clues...")
-//	}
-//	w.WriteHeader(http.StatusOK)
-//	resp := responseBundle.response.Body
-//	defer responseBundle.response.Body.Close()
-//	respString, ioerr := ioutil.ReadAll(resp)
-//	if ioerr != nil{
-//		fmt.Println("Error Fetching extracting body...")
-//	}
-//	fmt.Println(respString)
-//	fmt.Fprintf(w, "Check your console")
-//	//fmt.Fprintf(w, string(respString))
-//}
+func enableCORS(w *http.ResponseWriter){
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+func marshalJSON(data []map[string] interface{}) []byte {
+	jsonClues, err := json.Marshal(map[string] interface{}{})
+	if err != nil{
+		panic(err)
+	}
+	return jsonClues
+}
 
 func main() {
 	http.HandleFunc("/", index)
