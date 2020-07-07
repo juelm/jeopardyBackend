@@ -9,6 +9,11 @@ import (
 	"net/http"
 )
 
+type Game struct {
+	int points
+
+}
+
 type HTTPResponseErrorBundle struct {
 	response *http.Response
 	err error

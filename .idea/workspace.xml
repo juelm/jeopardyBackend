@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="71e5f032-b532-40be-91f8-87568710c1ec" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeopardy.exe" beforeDir="false" afterPath="$PROJECT_DIR$/jeopardy.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jeopardy.go" beforeDir="false" afterPath="$PROJECT_DIR$/jeopardy.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,6 +57,10 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="631" y="151" key="CommitChangelistDialog2" timestamp="1594077016900">
+      <screen x="0" y="0" width="2048" height="1112" />
+    </state>
+    <state x="631" y="151" key="CommitChangelistDialog2/5120.-369.1620.1055/2560.14.2048.1112/0.0.2048.1112@0.0.2048.1112" timestamp="1594077016900" />
     <state x="591" y="275" key="FileChooserDialogImpl" timestamp="1591026959047">
       <screen x="0" y="0" width="1620" height="1040" />
     </state>
